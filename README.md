@@ -1,0 +1,2 @@
+# msibanking
+Playground for microservices
