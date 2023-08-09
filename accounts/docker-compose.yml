@@ -1,0 +1,26 @@
+version: "2.8"
+
+services:
+  accounts:
+    image: polo1jcw/msi:accounts
+    mem_limit: 700m
+    ports:
+      - "8080:8080"
+    networks:
+      - msi-network
+  loans:
+    image: polo1jcw/msi:loans
+    mem_limit: 700m
+    ports:
+      - "8081:8090"
+    networks:
+      - msi-network
+  cards:
+    image: polo1jcw/msi:cards
+    mem_limit: 700m
+    ports:
+      - "8082:8070"
+    networks:
+      - msi-network
+networks:
+  msi-network:
