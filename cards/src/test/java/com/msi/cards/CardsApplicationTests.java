@@ -1,10 +1,10 @@
-package com.msi.loans;
+package com.msi.cards;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class HelloworldserviceApplicationTests {
+class CardsApplicationTests {
 
 	@Test
 	void contextLoads() {

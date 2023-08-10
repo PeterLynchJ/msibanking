@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  configserver:
+    image: polo1jcw/configserver
+    mem_limit: 700m
+    ports:
+      - "8071:8071"
+    networks:
+      - msi-network
+
+  accounts:
+    image: polo1jcw/accounts
+    mem_limit: 700m
+    ports:
+      - "8080:8080"
+    networks:
+      - msi-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+  loans:
+    image: polo1jcw/loans
+    mem_limit: 700m
+    ports:
+      - "8081:8090"
+    networks:
+      - msi-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+  cards:
+    image: polo1jcw/cards
+    mem_limit: 700m
+    ports:
+      - "8082:8070"
+    networks:
+      - msi-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+networks:
+  msi-network:
