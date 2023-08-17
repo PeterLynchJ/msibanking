@@ -3,11 +3,29 @@ version: "3.8"
 services:
   configserver:
     image: polo1jcw/configserver
-    mem_limit: 700m
+    mem_limit: 1024m
     ports:
       - "8071:8071"
     networks:
       - msi-network
+  eurekaserver:
+    image: polo1jcw/eurekaserver
+    mem_limit: 1000m
+    ports:
+      - "8069:8069"
+    networks:
+      - msi-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
 
   accounts:
     image: polo1jcw/accounts
@@ -18,53 +36,104 @@ services:
       - msi-network
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 25s
         max_attempts: 3
         window: 120s
     environment:
       SPRING_APPLICATION_NAME: accounts
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-  loans:
-    image: polo1jcw/loans
-    mem_limit: 700m
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8069/eureka/
+  accounts1:
+    image: polo1jcw/accounts
+    mem_limit: 900m
     ports:
-      - "8081:8090"
+      - "8081:8080"
     networks:
       - msi-network
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_APPLICATION_NAME: accounts
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8069/eureka/
+  loans:
+    image: polo1jcw/loans
+    mem_limit: 1024m
+    ports:
+      - "8090:8090"
+    networks:
+      - msi-network
+    depends_on:
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 25s
         max_attempts: 3
         window: 120s
     environment:
       SPRING_APPLICATION_NAME: loans
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8069/eureka/
   cards:
     image: polo1jcw/cards
     mem_limit: 900m
     ports:
-      - "8082:8070"
+      - "8060:8060"
     networks:
       - msi-network
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 25s
         max_attempts: 3
         window: 120s
     environment:
       SPRING_APPLICATION_NAME: CARDS
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8069/eureka/
+  gatewayserver:
+    image: msi/gatewayserver:latest
+    mem_limit: 700m
+    ports:
+      - "8072:8072"
+    networks:
+      - msi-network
+    depends_on:
+      - configserver
+      - eurekaserver
+      - cards
+      - loans
+      - accounts
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 45s
+        max_attempts: 3
+        window: 180s
+    environment:
+      SPRING_APPLICATION_NAME: gatewayserver
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8069/eureka/
 networks:
   msi-network:

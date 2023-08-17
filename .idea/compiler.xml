@@ -7,10 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="eurekaserver" />
+        <module name="gatewayserver" />
         <module name="config-server" />
         <module name="cards" />
-        <module name="accounts" />
         <module name="loans" />
+        <module name="accounts" />
         <module name="helloworldservice" />
       </profile>
     </annotationProcessing>
@@ -18,6 +20,8 @@
       <module name="accounts" target="17" />
       <module name="cards" target="17" />
       <module name="config-server" target="17" />
+      <module name="eurekaserver" target="17" />
+      <module name="gatewayserver" target="17" />
       <module name="helloworldservice" target="17" />
       <module name="loans" target="17" />
     </bytecodeTargetLevel>
@@ -27,6 +31,8 @@
       <module name="accounts" options="-parameters" />
       <module name="cards" options="-parameters" />
       <module name="config-server" options="-parameters" />
+      <module name="eurekaserver" options="-parameters" />
+      <module name="gatewayserver" options="-parameters" />
       <module name="helloworldservice" options="-parameters" />
       <module name="loans" options="-parameters" />
     </option>
